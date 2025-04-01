@@ -1,0 +1,24 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Цей проєкт є веб-сайтом, присвяченим риболовлі(Ні, так просто написав чат гпт). Він міститиме корисну інформацію для рибалок, поради, огляди місць для риболовлі, обладнання, а також інтерактивні можливості для спільноти.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarianNULP/web2425ki409pavlosmy17.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarianNULP/web2425ki409pavlosmy17/issues"
+  },
+  "homepage": "https://github.com/MarianNULP/web2425ki409pavlosmy17#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
