@@ -1,38 +1,131 @@
+/* Загальні стилі */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 0;
-  }
-  
-  header {
-    margin-bottom: 20px;
-  }
-  
-  nav button {
-    margin-right: 10px;
-    cursor: pointer;
-  }
-  
-  #contentArea {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    gap: 10px;
-  }
-  
-  form label {
-    font-weight: bold;
-  }
-  
-  #formResponse {
-    margin-top: 10px;
-    font-style: italic;
-    color: green;
-  }
-      
+  font-family: 'Roboto', sans-serif;
+  background: #f2f2f2;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Стилізація header */
+header {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+  object-fit: cover;
+  border: 3px solid #007BFF;
+}
+
+.header-text h1 {
+  font-size: 1.8em;
+  margin-bottom: 5px;
+}
+
+.header-text p {
+  font-size: 1.1em;
+  color: #555;
+}
+
+/* Стилізація навігації */
+nav {
+  margin-top: 10px;
+}
+
+nav button {
+  background: #007BFF;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+nav button:hover {
+  background: #0056b3;
+}
+
+/* Основний контент */
+main#contentArea {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  min-height: 200px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+/* Стилізація форми та секції */
+section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+section h2 {
+  margin-bottom: 15px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+form input[type="text"],
+form input[type="email"],
+form textarea {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form button[type="submit"] {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+form button[type="submit"]:hover {
+  background: #218838;
+}
+
+/* Футер */
+footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #777;
+}
