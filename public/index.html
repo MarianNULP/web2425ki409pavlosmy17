@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Моя Візитка</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" href="#">
+</head>
+<body>
+  <header>
+    <h1>Вітаю на моєму сайті-візитці</h1>
+    <!-- Навігаційна панель -->
+    <nav>
+      <!-- Кнопки завантажують частковий контент через AJAX -->
+      <button id="btnAbout">Про мене (About)</button>
+      <button id="btnProject">Проєкт (Project)</button>
+    </nav>
+  </header>
+
+  <!-- Головний контейнер, куди будемо підвантажувати часткові HTML -->
+  <main id="contentArea">
+    <p>Оберіть розділ, щоб переглянути додаткову інформацію, або заповніть форму нижче.</p>
+  </main>
+
+  <!-- Форма для зв’язку (Contact). Використовує POST. -->
+  <section>
+    <h2>Зворотній зв'язок</h2>
+    <form id="contactForm">
+      <label for="name">Ім'я:</label>
+      <input type="text" id="name" name="name" required/>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required/>
+
+      <label for="message">Повідомлення:</label>
+      <textarea id="message" name="message" required></textarea>
+
+      <button type="submit">Надіслати</button>
+    </form>
+    <!-- Тут будемо показувати відповідь з сервера після відправки форми -->
+    <div id="formResponse"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

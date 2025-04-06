@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+  }
+  
+  header {
+    margin-bottom: 20px;
+  }
+  
+  nav button {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  #contentArea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    gap: 10px;
+  }
+  
+  form label {
+    font-weight: bold;
+  }
+  
+  #formResponse {
+    margin-top: 10px;
+    font-style: italic;
+    color: green;
+  }
+      
