@@ -20,5 +20,9 @@
   "homepage": "https://github.com/MarianNULP/web2425ki409pavlosmy17#readme",
   "dependencies": {
     "express": "^5.1.0"
-  }
+  },
+  "engines": {
+    "node": ">=14.0.0"
+}
+
 }
