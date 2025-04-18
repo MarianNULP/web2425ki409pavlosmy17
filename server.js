@@ -1,140 +1,150 @@
-// server.js
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const passport = require('passport');
+const mongoose = require('mongoose');
 const session = require('express-session');
+const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const User = require('./models/User');
 
 const app = express();
 
-// Налаштування сесій (необхідно для Passport)
+// Налаштування view engine для EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Підключення до MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error:', err));
+
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));  // для форм та AJAX
+app.use(express.json());                          // для JSON (feedback)
 app.use(session({
-  secret: 'your_secret_key', // замініть на секретний ключ
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }));
-
-// Ініціалізуємо Passport та сесію
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Для роботи з POST-запитами (форма)
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Роздача статичних файлів з теки public
-app.use(express.static('public'));
-
-/* ===================================================================
-   Налаштування Passport: серіалізація/десеріалізація користувача
-   =================================================================== */
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
-});
-
-/* ===================================================================
-   Стратегія аутентифікації Google
-   =================================================================== */
-
-passport.use(new GoogleStrategy({
-    clientID: 'YOUR_GOOGLE_CLIENT_ID',           // Підставте свій Client ID
-    clientSecret: 'YOUR_GOOGLE_CLIENT_SECRET',     // Підставте свій Client Secret
-    callbackURL: '/auth/google/callback'
-  },
-  (accessToken, refreshToken, profile, done) => {
-    // Тут ви можете зберігати/оновлювати користувацькі дані у базі даних
-    console.log('Google profile:', profile);
-    return done(null, profile);
+// Passport: серіалізація/десеріалізація
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
   }
-));
+});
 
-/* ===================================================================
-   Стратегія локальної аутентифікації (login & password)
-   =================================================================== */
-
-passport.use(new LocalStrategy((username, password, done) => {
-  // Замість цього блоку потрібно реалізувати пошук користувача у базі даних
-  // Це приклад для демонстрації. Наприклад, перевірка жорстко зашитих значень:
-  if (username === 'admin' && password === 'password') {
-    // Створюємо користувача (у реальному застосунку дані повинні зберігатися в базі)
-    return done(null, { id: 1, username: 'admin' });
-  } else {
-    return done(null, false, { message: 'Невірний логін/пароль' });
+// Passport: Google OAuth Strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/auth/google/callback'
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ googleId: profile.id });
+    if (!user) {
+      user = await User.create({
+        googleId: profile.id,
+        username: profile.displayName
+      });
+    }
+    return done(null, user);
+  } catch (err) {
+    done(err);
   }
 }));
 
-/* ===================================================================
-   Маршрути для аутентифікації
-   =================================================================== */
-
-// Маршрут для перевірки, чи користувач аутентифікований
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
+// Passport: Local Strategy
+passport.use(new LocalStrategy(async (username, password, done) => {
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return done(null, false, { message: 'Невірний логін або пароль' });
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) return done(null, false, { message: 'Невірний логін або пароль' });
+    return done(null, user);
+  } catch (err) {
+    done(err);
   }
+}));
+
+// Middleware для захищених маршрутів
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) return next();
   res.redirect('/login');
 }
 
-// =================== Google OAuth ===================
-
-// Коли користувач натискає «Увійти через Google»
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Callback-URL після авторизації Google
+// Routes
+// Google OAuth маршрути
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile','email'] }));
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    // Успішна аутентифікація, перенаправляємо на головну.
-    res.redirect('/');
-  }
+  (req, res) => res.redirect('/')
 );
 
-// =================== Локальна аутентифікація ===================
-
-// Форма входу (створіть файл login.html у public або генеруйте HTML тут)
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-// Обробка логіну (POST)
+// Локальна аутентифікація
+app.get('/login', (req, res) => res.render('login'));
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login'
 }));
 
-// Роут для виходу
-app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-});
-
-/* ===================================================================
-   Інші маршрути
-   =================================================================== */
-
-// Головна сторінка
-app.get('/', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.send(`<h1>Ласкаво просимо, ${req.user.displayName || req.user.username}!</h1>
-              <p><a href="/logout">Вихід</a></p>`);
-  } else {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get('/register', (req, res) => res.render('register'));
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    if (await User.findOne({ username })) {
+      return res.send('Користувач із таким імʼям вже існує');
+    }
+    const passwordHash = await bcrypt.hash(password, 10);
+    await User.create({ username, passwordHash });
+    res.redirect('/login');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Помилка сервера');
   }
 });
 
-// Маршрути для вашого додаткового контенту
+// Обробка зворотнього зв'язку (feedback) через AJAX
+app.post('/form-submit', (req, res) => {
+  const { name, email, message } = req.body;
+  console.log('Feedback received:', { name, email, message });
+  // Тут можна додати збереження у БД або надсилання листа
+  res.send('Дякуємо за ваше повідомлення!');
+});
+
+// Logout
+app.get('/logout', (req, res) => {
+  req.logout(err => {
+    if (err) console.error(err);
+    res.redirect('/');
+  });
+});
+
+// Головна сторінка
+app.get('/', (req, res) => {
+  res.render('index', { user: req.user });
+});
+
+// AJAX-контент
 app.get('/loadContent', (req, res) => {
   const section = req.query.section;
-  if (section === 'about') {
-    res.sendFile(path.join(__dirname, 'public', 'partial-about.html'));
-  } else if (section === 'project') {
-    res.sendFile(path.join(__dirname, 'public', 'partial-project.html'));
+  const file = section === 'about' ? 'partial-about.html'
+               : section === 'project' ? 'partial-project.html'
+               : null;
+  if (file) {
+    res.sendFile(path.join(__dirname, 'public', file));
   } else {
     res.status(404).send('Section not found');
   }
@@ -142,6 +152,4 @@ app.get('/loadContent', (req, res) => {
 
 // Запуск сервера
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Сервер запущено на порті ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Сервер запущено на порті ${PORT}`));
