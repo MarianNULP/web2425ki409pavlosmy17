@@ -1,23 +1,25 @@
 {
-  "name": "web",
+  "name": "web-visitka",
   "version": "1.0.0",
-  "description": "Цей проєкт є веб-сайтом, присвяченим риболовлі(Ні, так просто написав чат гпт). Він міститиме корисну інформацію для рибалок, поради, огляди місць для риболовлі, обладнання, а також інтерактивні можливості для спільноти.",
+  "description": "Візитка Мар'яна Павлось — веб-сайт з інформацією про мене, мій проєкт та зворотнім зв'язком.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MarianNULP/web2425ki409pavlosmy17.git"
+    "url": "https://github.com/MarianNULP/web2425ki409pavlosmy17.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["express", "ejs", "passport", "mongodb", "nodejs"],
+  "author": "Мар'ян Павлось",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MarianNULP/web2425ki409pavlosmy17/issues"
   },
   "homepage": "https://github.com/MarianNULP/web2425ki409pavlosmy17#readme",
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "dotenv": "^16.5.0",
@@ -28,8 +30,5 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
   }
 }
