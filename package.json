@@ -1,34 +1,23 @@
 {
-  "name": "web-visitka",
+  "name": "web",
   "version": "1.0.0",
-  "description": "Візитка Мар'яна Павлось — веб-сайт з інформацією про мене, мій проєкт та зворотнім зв'язком.",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MarianNULP/web2425ki409pavlosmy17.git"
+    "url": "git+https://github.com/MarianNULP/web2425ki409pavlosmy17.git"
   },
-  "keywords": ["express", "ejs", "passport", "mongodb", "nodejs"],
-  "author": "Мар'ян Павлось",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MarianNULP/web2425ki409pavlosmy17/issues"
   },
   "homepage": "https://github.com/MarianNULP/web2425ki409pavlosmy17#readme",
-  "engines": {
-    "node": "18.x"
-  },
+  "description": "",
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "dotenv": "^16.5.0",
-    "ejs": "^3.1.10",
-    "express": "^5.1.0",
-    "express-session": "^1.18.1",
-    "mongoose": "^8.13.2",
-    "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0",
-    "passport-local": "^1.0.0"
+    "express": "^5.1.0"
   }
 }

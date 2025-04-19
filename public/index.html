@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Моя візитка</title>
+</head>
+<body>
+  <h1>Вітаю!</h1>
+
+  <p>Мене звати Мар'ян, я займаюся розробкою зайту з методами post, get</p>
+
+  <!-- label дати/часу -->
+  <p>Завантажено: <span id="loaded"></span></p>
+
+  <!-- інлайн-скрипт, що підставляє дату -->
+  <script>
+    document.getElementById('loaded').textContent =
+      new Date().toLocaleString();
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<h2>GET AJAX</h2>
+<button id="getBtn">Load time</button>
+<p id="getOut"></p>
+
+<h2>POST AJAX</h2>
+<form id="postForm">
+  <input name="msg" placeholder="Type something">
+  <button>Send</button>
+</form>
+<p id="postOut"></p>
+
+<script>
+getBtn.onclick = async () => {
+  const r = await fetch('/api/time');           // GET
+  getOut.textContent = (await r.json()).ts;
+};
+
+postForm.onsubmit = async e => {
+  e.preventDefault();
+  const fd = new FormData(postForm);
+  const r = await fetch('/api/echo', {          // POST
+    method: 'POST', body: new URLSearchParams(fd)
+  });
+  postOut.textContent = JSON.stringify(await r.json());
+};
+</script>
