@@ -1,4 +1,7 @@
-require('dotenv').config();                 // читати .env
+require('dotenv').config();
+
+import passport from './auth/google.js';
+import cookieSession from 'cookie-session';
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
@@ -9,6 +12,31 @@ const User = require('./models/User');
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const { verifyHash } = require('./utils/crypto');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_ID,
+  clientSecret: process.env.GOOGLE_SECRET,
+  callbackURL: '/auth/google/callback'
+}, async (_access, _refresh, profile, done) => {
+  const email = profile.emails[0].value;
+  const user = await User.findOneAndUpdate(
+      { email },
+      { googleId: profile.id },
+      { upsert:true, new:true }
+  );
+  done(null, user);
+}));
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope:['profile','email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect:'/login' }),
+  (_, res) => res.redirect('/dashboard')
+);
+
 
 mongoose.connect(process.env.MONGO_URI)
   .then(()=>console.log('🟢 MongoDB connected'))
@@ -27,6 +55,10 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.use(router);
+
+app.use(cookieSession({ secret: process.env.COOKIE_SECRET, maxAge: 864e5 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/get-page', (_, res) =>
   res.sendFile(__dirname + '/public/index.html')
@@ -90,6 +122,15 @@ function auth(req, res, next) {
 
 app.get('/dashboard', auth, (_, res) =>
   res.send('Вітаю! Ви увійшли як ID '+_.userId)
+);
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope:['profile','email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect:'/login' }),
+  (_,res)=> res.redirect('/dashboard')
 );
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
