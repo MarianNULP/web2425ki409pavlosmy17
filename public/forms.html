@@ -33,33 +33,51 @@
   </section>
 
   <script>
-    // 1) Встановлюємо час первинного завантаження
-    document.getElementById('loaded').textContent =
-      new Date().toLocaleString();
+  const getInput  = document.getElementById('getInput');
+  const getBtn    = document.getElementById('getBtn');
+  const getList   = document.getElementById('getList');
 
-    // 2) GET (AJAX)
-    document.getElementById('getBtn').onclick = async () => {
-      const v = document.getElementById('getInput').value;
-      const res = await fetch('/api/time?data=' + encodeURIComponent(v));
-      const j   = await res.json();
-      const li  = document.createElement('li');
-      li.textContent = `[GET] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
-      document.getElementById('getList').append(li);
-    };
+  const postInput = document.getElementById('postInput');
+  const postBtn   = document.getElementById('postBtn');
+  const postList  = document.getElementById('postList');
 
-    // 3) POST (AJAX)
-    document.getElementById('postBtn').onclick = async () => {
-      const v   = document.getElementById('postInput').value;
-      const res = await fetch('/api/echo', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({data: v})
-      });
-      const j  = await res.json();
-      const li = document.createElement('li');
-      li.textContent = `[POST] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
-      document.getElementById('postList').append(li);
-    };
+  // час завантаження
+  document.getElementById('loaded').textContent =
+    new Date().toLocaleString();
+
+  // GET (AJAX) — очищаємо список перед додаванням
+  getBtn.onclick = async () => {
+    const v   = getInput.value;
+    const res = await fetch('/api/time?data=' + encodeURIComponent(v));
+    const j   = await res.json();
+
+    // ОЧИЩАЄМО попередній результат
+    getList.innerHTML = '';
+
+    // Додаємо новий
+    const li = document.createElement('li');
+    li.textContent = `[GET] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
+    getList.append(li);
+  };
+
+  // POST (AJAX) — аналогічно очищаємо
+  postBtn.onclick = async () => {
+    const v   = postInput.value;
+    const res = await fetch('/api/echo', {
+      method:  'POST',
+      headers: {'Content-Type':'application/json'},
+      body:    JSON.stringify({data: v})
+    });
+    const j   = await res.json();
+
+    // ОЧИЩАЄМО попередній результат
+    postList.innerHTML = '';
+
+    // Додаємо новий
+    const li = document.createElement('li');
+    li.textContent = `[POST] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
+    postList.append(li);
+  };
   </script>
 </body>
 </html>
