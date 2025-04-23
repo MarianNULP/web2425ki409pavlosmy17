@@ -27,20 +27,20 @@
   <div class="card mx-auto" style="max-width: 28rem;">
     <div class="card-header">Demo запити</div>
     <div class="card-body d-grid gap-2">
-      <!-- GET -->
-      <a class="btn btn-outline-secondary" href="/get-page" target="_blank">
-        GET‑page
-      </a>
+    <!-- GET-форма, результат у новій вкладці -->
+    <form action="/get-page" method="GET" target="_blank" class="mb-3">
+      <input name="data" placeholder="GET: введіть текст" required>
+      <button class="btn btn-outline-primary">Відправити GET</button>
+    </form>
 
-      <!-- POST (через невидиму форму) -->
-      <form action="/post-page" method="POST" target="_blank">
-        <button class="btn btn-outline-secondary w-100">POST‑page</button>
-      </form>
+    <!-- POST-форма, результат у новій вкладці -->
+    <form action="/post-page" method="POST" target="_blank" class="mb-3">
+      <input name="data" placeholder="POST: введіть текст" required>
+      <button class="btn btn-outline-success">Відправити POST</button>
+    </form>
 
       <!-- AJAX -->
-      <a class="btn btn-outline-secondary" href="/forms.html">
-        AJAX‑forms
-      </a>
+      <a href="/forms.html" class="btn btn-outline-secondary">AJAX‑форми</a>
     </div>
   </div>
   <!-- -------------------------------- -->

@@ -1,49 +1,51 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>AJAX‑форми</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    section { margin-bottom: 2rem; }
+    ul { list-style: none; padding-left: 0; }
+    li { background: #eef; margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <section>
+    <h2>GET (AJAX)</h2>
+    <input id="getInput" placeholder="Введіть текст…">
+    <button id="getBtn">GET + час</button>
+    <ul id="getList"></ul>
+  </section>
 
-<div class="container py-4" style="max-width: 480px">
+  <section>
+    <h2>POST (AJAX)</h2>
+    <input id="postInput" placeholder="Введіть текст…">
+    <button id="postBtn">POST + ехо</button>
+    <ul id="postList"></ul>
+  </section>
 
-  <!-- GET --------------- -->
-  <div class="card mb-4">
-    <div class="card-header">GET (AJAX)</div>
-    <div class="card-body text-center">
-      <button id="getBtn" class="btn btn-outline-primary">
-        Завантажити час
-      </button>
-      <p id="getOut" class="mt-3 fw-bold"></p>
-    </div>
-  </div>
+  <script>
+    document.getElementById('getBtn').onclick = async () => {
+      const v = document.getElementById('getInput').value;
+      const res = await fetch('/api/time?data=' + encodeURIComponent(v));
+      const j = await res.json();
+      const li = document.createElement('li');
+      li.textContent = `[GET] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
+      document.getElementById('getList').append(li);
+    };
 
-  <!-- POST -------------- -->
-  <div class="card">
-    <div class="card-header">POST (AJAX)</div>
-    <div class="card-body">
-      <form id="postForm" class="input-group">
-        <input name="msg" class="form-control" placeholder="Напишіть щось…" required>
-        <button class="btn btn-success">Надіслати</button>
-      </form>
-      <pre id="postOut" class="mt-3 bg-light p-2 rounded small"></pre>
-    </div>
-  </div>
-
-</div>
-
-<script>
-/* --- GET --- */
-getBtn.onclick = async () => {
-  getOut.textContent = 'Завантаження…';
-  const r = await fetch('/api/time');
-  getOut.textContent = (await r.json()).ts;
-};
-
-/* --- POST --- */
-postForm.onsubmit = async e => {
-  e.preventDefault();
-  postOut.textContent = 'Завантаження…';
-  const fd = new FormData(postForm);
-  const r  = await fetch('/api/echo', {
-    method:'POST',
-    body : new URLSearchParams(fd)
-  });
-  postOut.textContent = JSON.stringify(await r.json(), null, 2);
-};
-</script>
+    document.getElementById('postBtn').onclick = async () => {
+      const v = document.getElementById('postInput').value;
+      const res = await fetch('/api/echo', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({data: v})
+      });
+      const j = await res.json();
+      const li = document.createElement('li');
+      li.textContent = `[POST] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
+      document.getElementById('postList').append(li);
+    };
+  </script>
+</body>
+</html>
