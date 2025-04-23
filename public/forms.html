@@ -2,46 +2,60 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>AJAX‑форми</title>
+  <title>AJAX-форми</title>
   <style>
     body { font-family: sans-serif; padding: 1rem; }
     section { margin-bottom: 2rem; }
     ul { list-style: none; padding-left: 0; }
     li { background: #eef; margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; }
+    .loaded { font-size: 0.9rem; color: #666; margin-bottom: 1rem; }
   </style>
 </head>
 <body>
+
+  <!-- Ось додали рядок із часом завантаження -->
+  <p class="loaded">
+    Сторінка завантажена: <span id="loaded"></span>
+  </p>
+
   <section>
-    <h2>GET (AJAX)</h2>
+    <h2>GET (AJAX)</h2>
     <input id="getInput" placeholder="Введіть текст…">
     <button id="getBtn">GET + час</button>
     <ul id="getList"></ul>
   </section>
 
   <section>
-    <h2>POST (AJAX)</h2>
+    <h2>POST (AJAX)</h2>
     <input id="postInput" placeholder="Введіть текст…">
     <button id="postBtn">POST + ехо</button>
     <ul id="postList"></ul>
   </section>
 
   <script>
+    // 1) Встановлюємо час первинного завантаження
+    document.getElementById('loaded').textContent =
+      new Date().toLocaleString();
+
+    // 2) GET (AJAX)
     document.getElementById('getBtn').onclick = async () => {
       const v = document.getElementById('getInput').value;
       const res = await fetch('/api/time?data=' + encodeURIComponent(v));
-      const j = await res.json();
-      const li = document.createElement('li');
+      const j   = await res.json();
+      const li  = document.createElement('li');
       li.textContent = `[GET] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
       document.getElementById('getList').append(li);
     };
 
+    // 3) POST (AJAX)
     document.getElementById('postBtn').onclick = async () => {
-      const v = document.getElementById('postInput').value;
+      const v   = document.getElementById('postInput').value;
       const res = await fetch('/api/echo', {
-        method: 'POST', headers: {'Content-Type':'application/json'},
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
         body: JSON.stringify({data: v})
       });
-      const j = await res.json();
+      const j  = await res.json();
       const li = document.createElement('li');
       li.textContent = `[POST] "${j.youSent.data}" → ${new Date(j.ts).toLocaleString()}`;
       document.getElementById('postList').append(li);
